@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      function getSelectedText() {
+        var sel,
+          text = "";
+        if (window.getSelection) {
+          text = "" + window.getSelection();
+        } else if ((sel = document.selection) && sel.type == "Text") {
+          text = sel.createRange().text;
+        }
+        return text;
+      }
+      function sendData() {
+        const url = "link";
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: {
+              name: "John",
+              email: "john@example.com",
+            },
+          }),
+        })
+          .then(
+            (response) => response.text() // .json(), etc.
+            // same as function(response) {return response.text();}
+          )
+          .then((html) => console.log(html))
+          .catch((e) => console.log(e));
+      }
+
+      function loadData() {
+        async function getTheFile() {
+          // open file picker
+          [fileHandle] = await window.showOpenFilePicker();
+          // get file contents
+          const fileData = await fileHandle.getFile();
+          console.log(fileData);
+          const result = await fileData.text();
+          console.log(result);
+          document.getElementById("text_area").innerHTML = result;
+          // contents1 = result;
+          return result;
+        }
+        getTheFile();
+      }
+      function saveData(contents) {
+        async function writeFile(contents) {
+          const options = {
+            types: [
+              {
+                description: "Text Files",
+                accept: {
+                  "text/plain": [".txt"],
+                },
+              },
+            ],
+          };
+          const contents1 = document.getElementById("text_area").innerHTML;
+          const fileHandle = await window.showSaveFilePicker(options);
+          // Create a FileSystemWritableFileStream to write to.
+          const writable = await fileHandle.createWritable();
+          // Write the contents of the file to the stream.
+          await writable.write(contents1);
+          // Close the file and write the contents to disk.
+          await writable.close();
+        }
+        writeFile(contents);
+      }
+    </script>
+    <style>
+      .main {
+      }
+      #text_area {
+        border: 1px solid #000;
+        height: 70vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <form action="/link" method="POST">
+        <button type="button" onclick="document.execCommand('bold')">B</button>
+        <button type="button" onclick="document.execCommand('italic')">
+          I
+        </button>
+        <button
+          type="button"
+          onclick="document.execCommand('insertUnorderedList')"
+        >
+          L
+        </button>
+
+        <div id="text_area" contenteditable>
+          Lorem Ipsum is simply dummy text of the printing and typesetting
+          industry. Lorem Ipsum has been the industry's standard dummy text ever
+          since the 1500s, when an unknown printer took a galley of type and
+          scrambled it to make a type specimen book. It has survived not only
+          five centuries, but also the leap into electronic typesetting,
+          remaining essentially unchanged. It was popularised in the 1960s with
+          the release of Letraset sheets containing Lorem Ipsum passages, and
+          more recently with desktop publishing software like Aldus PageMaker
+          including versions of Lorem Ipsum.
+        </div>
+        <button type="button" onclick="sendData()">Save</button>
+        <button type="button" onclick="sendData()">Load</button>
+        <button type="button" onclick="loadData()">loadData</button>
+        <button type="button" onclick="saveData('kek')">saveData</button>
+        <input type="file" id="avatar" name="avatar" accept=".json" />
+      </form>
+    </div>
+  </body>
+</html>

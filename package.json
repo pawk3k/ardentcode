@@ -1,0 +1,34 @@
+{
+  "name": "ardentcode",
+  "version": "1.0.0",
+  "description": "work project",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pawk3k/ardentcode.git"
+  },
+  "keywords": [
+    "js",
+    "nodejs"
+  ],
+  "author": "Pavlo Ravliv",
+  "license": "ISC",
+  "eslintConfig": {
+    "env": {
+      "es6": true
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/pawk3k/ardentcode/issues"
+  },
+  "homepage": "https://github.com/pawk3k/ardentcode#readme"
+}
