@@ -6,80 +6,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script>
-      function getSelectedText() {
-        var sel,
-          text = "";
-        if (window.getSelection) {
-          text = "" + window.getSelection();
-        } else if ((sel = document.selection) && sel.type == "Text") {
-          text = sel.createRange().text;
+      function saveData() {
+        const fileName = document.getElementById("fileInput")?.files[0]?.name;
+        if (fileName == undefined) {
+          alert("Choose file");
+          return;
         }
-        return text;
-      }
-      function sendData() {
-        const url = "link";
-        fetch(url, {
+        const fileData = document
+          .getElementById("text_area")
+          .innerHTML.toString();
+        fetch("save", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            user: {
-              name: "John",
-              email: "john@example.com",
+            file: {
+              fileName: fileName ?? "file.json",
+              data: fileData,
             },
           }),
         })
-          .then(
-            (response) => response.text() // .json(), etc.
-            // same as function(response) {return response.text();}
-          )
+          .then((response) => response.text())
           .then((html) => console.log(html))
           .catch((e) => console.log(e));
       }
-
       function loadData() {
-        async function getTheFile() {
-          // open file picker
-          [fileHandle] = await window.showOpenFilePicker();
-          // get file contents
-          const fileData = await fileHandle.getFile();
-          console.log(fileData);
-          const result = await fileData.text();
-          console.log(result);
-          document.getElementById("text_area").innerHTML = result;
-          // contents1 = result;
-          return result;
+        const fileName = document.getElementById("fileInput")?.files[0]?.name;
+        if (fileName == undefined) {
+          alert("Choose file");
+          return;
         }
-        getTheFile();
-      }
-      function saveData(contents) {
-        async function writeFile(contents) {
-          const options = {
-            types: [
-              {
-                description: "Text Files",
-                accept: {
-                  "text/plain": [".txt"],
-                },
-              },
-            ],
-          };
-          const contents1 = document.getElementById("text_area").innerHTML;
-          const fileHandle = await window.showSaveFilePicker(options);
-          // Create a FileSystemWritableFileStream to write to.
-          const writable = await fileHandle.createWritable();
-          // Write the contents of the file to the stream.
-          await writable.write(contents1);
-          // Close the file and write the contents to disk.
-          await writable.close();
-        }
-        writeFile(contents);
+        fetch("load", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: fileName,
+          }),
+        })
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("text_area").innerHTML = data.toString();
+          })
+          .catch((e) => console.log(e));
       }
     </script>
     <style>
-      .main {
-      }
       #text_area {
         border: 1px solid #000;
         height: 70vh;
@@ -88,7 +62,7 @@
   </head>
   <body>
     <div class="main">
-      <form action="/link" method="POST">
+      <form action="/save" method="POST">
         <button type="button" onclick="document.execCommand('bold')">B</button>
         <button type="button" onclick="document.execCommand('italic')">
           I
@@ -111,11 +85,9 @@
           more recently with desktop publishing software like Aldus PageMaker
           including versions of Lorem Ipsum.
         </div>
-        <button type="button" onclick="sendData()">Save</button>
-        <button type="button" onclick="sendData()">Load</button>
-        <button type="button" onclick="loadData()">loadData</button>
-        <button type="button" onclick="saveData('kek')">saveData</button>
-        <input type="file" id="avatar" name="avatar" accept=".json" />
+        <button type="button" onclick="saveData()">Save</button>
+        <button type="button" onclick="loadData()">Load</button>
+        <input type="file" id="fileInput" name="fileInput" accept=".json" />
       </form>
     </div>
   </body>
