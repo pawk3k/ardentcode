@@ -1,18 +1,16 @@
 const express = require("express");
 const path = require("path");
-const cors = require("cors");
 var fs = require("fs");
 
 const app = express();
 const port = 3002;
+
+app.use(express.static("public"));
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(function (req, res, next) {
-  // Website you wish to allow to connect
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:8888");
-  // Request methods you wish to allow
   res.setHeader("Access-Control-Allow-Methods", " POST");
-  // Request headers you wish to allow
   res.setHeader(
     "Access-Control-Allow-Headers",
     "X-Requested-With,content-type"

@@ -1,43 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="stylesheet" type="text/css" href="styles.css" media="screen" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script>
-      function getSelectedText() {
-        var sel,
-          text = "";
-        if (window.getSelection) {
-          text = "" + window.getSelection();
-        } else if ((sel = document.selection) && sel.type == "Text") {
-          text = sel.createRange().text;
-        }
-        return text;
-      }
-      function sendData() {
-        const url = "link";
-        fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user: {
-              name: "John",
-              email: "john@example.com",
-            },
-          }),
-        })
-          .then(
-            (response) => response.text() // .json(), etc.
-            // same as function(response) {return response.text();}
-          )
-          .then((html) => console.log(html))
-          .catch((e) => console.log(e));
-      }
-
       function loadData() {
         async function getTheFile() {
           // open file picker
@@ -47,14 +16,15 @@
           console.log(fileData);
           const result = await fileData.text();
           console.log(result);
-          document.getElementById("text_area").innerHTML = result;
-          // contents1 = result;
+          const parsedJson = JSON.parse(result);
+          document.getElementById("text_area").innerHTML = parsedJson.data;
+          alert("Files loaded");
           return result;
         }
         getTheFile();
       }
-      function saveData(contents) {
-        async function writeFile(contents) {
+      function saveData() {
+        async function writeFile() {
           const options = {
             types: [
               {
@@ -65,21 +35,20 @@
               },
             ],
           };
-          const contents1 = document.getElementById("text_area").innerHTML;
+          const contents = document.getElementById("text_area").innerHTML;
           const fileHandle = await window.showSaveFilePicker(options);
           // Create a FileSystemWritableFileStream to write to.
           const writable = await fileHandle.createWritable();
           // Write the contents of the file to the stream.
-          await writable.write(contents1);
+          await writable.write(contents);
           // Close the file and write the contents to disk.
           await writable.close();
+          alert("Files saved");
         }
-        writeFile(contents);
+        writeFile();
       }
     </script>
     <style>
-      .main {
-      }
       #text_area {
         border: 1px solid #000;
         height: 70vh;
@@ -89,16 +58,29 @@
   <body>
     <div class="main">
       <form action="/link" method="POST">
-        <button type="button" onclick="document.execCommand('bold')">B</button>
-        <button type="button" onclick="document.execCommand('italic')">
-          I
-        </button>
-        <button
-          type="button"
-          onclick="document.execCommand('insertUnorderedList')"
-        >
-          L
-        </button>
+        <div class="buttons_center">
+          <button
+            class="button"
+            type="button"
+            onclick="document.execCommand('bold')"
+          >
+            Bold
+          </button>
+          <button
+            class="button"
+            type="button"
+            onclick="document.execCommand('italic')"
+          >
+            Italic
+          </button>
+          <button
+            class="button"
+            type="button"
+            onclick="document.execCommand('insertUnorderedList')"
+          >
+            List
+          </button>
+        </div>
 
         <div id="text_area" contenteditable>
           Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -111,8 +93,12 @@
           more recently with desktop publishing software like Aldus PageMaker
           including versions of Lorem Ipsum.
         </div>
-        <button type="button" onclick="loadData()">Load</button>
-        <button type="button" onclick="saveData('kek')">Save</button>
+        <button class="buttonCommand" type="button" onclick="loadData()">
+          Load
+        </button>
+        <button class="buttonCommand" type="button" onclick="saveData()">
+          Save
+        </button>
       </form>
     </div>
   </body>
